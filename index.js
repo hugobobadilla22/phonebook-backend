@@ -65,13 +65,19 @@ app.post('/api/persons', (req, res, next) => {
             name: body.name,
             number: body.number
         });
-    
-        person.save()
-            .then(savedPerson => {
-                res.json(savedPerson);
+
+        person.validate()
+            .then(() => {
+                person.save()
+                    .then(savedPerson => {
+                        res.json(savedPerson);
+                    })
+                    .catch(error => {
+                        next(error);
+                    })
             })
             .catch(error => {
-                next(error);
+                res.status(400).json({ error: error.message });
             })
     })
     .catch(error => {
